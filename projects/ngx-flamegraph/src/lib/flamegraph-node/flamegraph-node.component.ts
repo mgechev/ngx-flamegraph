@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Data} from '@angular/router';
 
 @Component({
@@ -9,4 +9,11 @@ import {Data} from '@angular/router';
 })
 export class FlamegraphNodeComponent {
   @Input() entry: Data;
+  @Input() height: number;
+  @Input() width: number;
+  @Output() zoom = new EventEmitter();
+
+  select() {
+    this.zoom.emit(this.entry);
+  }
 }

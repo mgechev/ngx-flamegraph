@@ -6,4 +6,6 @@
   color: white;
   padding: 3px;
   font-size: 80%;
+  cursor: pointer;
+  user-select: none;
 }

@@ -1,5 +1,9 @@
-<svg>
-  <g ngx-flamegraph-node *ngFor="let entry of entries" [entry]="entry"
-     [style.transform]="'translate(' + entry.x + 'px,' + entry.y + 'px)'">
+<svg [attr.width]="width" [attr.height]="height" [attr.viewBox]="'0 0 ' + width + ' ' + height ">
+  <g ngx-flamegraph-node
+     (zoom)="zoom($event)"
+     *ngFor="let entry of entries" [entry]="entry"
+     [height]="barHeight"
+     [width]="getWidth(entry)"
+     [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'">
   </g>
 </svg>

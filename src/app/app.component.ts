@@ -1,55 +1,73 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  width = window.innerWidth;
   data = [
     {
-      label: 'Top level',
+      label: 'Root',
       value: 10,
       children: [
         {
-          label: 'Child 1',
-          value: 5,
-          children: [
-
-          ]
-        },
-        {
-          label: 'Child 2',
-          value: 3,
+          label: 'Top level',
+          value: 10,
           children: [
             {
-              label: 'Child 2',
-              value: 2,
+              label: 'Child 1',
+              value: 5,
               children: [
-
+                {
+                  label: 'Child 1 1',
+                  value: 5,
+                  children: []
+                },
+                {
+                  label: 'Child 1 2',
+                  value: 3,
+                  children: []
+                }
               ]
             },
             {
               label: 'Child 2',
-              value: 1,
+              value: 15,
+              children: []
+            }
+          ],
+        },
+        {
+          label: 'Top sibling',
+          value: 5,
+          children: [
+            {
+              label: 'Child 2',
+              value: 15,
               children: [
                 {
-                  label: 'Child 2',
-                  value: 3,
-                  children: [
-
-                  ]
+                  label: 'Child 3',
+                  value: 15,
+                  children: []
+                },
+                {
+                  label: 'Child 4',
+                  value: 10,
+                  children: []
                 }
               ]
             }
           ]
         }
-      ],
-    },
-    {
-      label: 'Top sibling',
-      value: 5,
-      children: []
+      ]
     }
   ];
+
+  ngOnInit() {
+    window.onresize = () => {
+      this.width = window.innerWidth;
+    };
+  }
 }

@@ -7,16 +7,14 @@ export interface RawData {
 export interface Data {
   label: string;
   value: number;
-  width: number;
-  height: number;
   color: string;
-  x: number;
-  y: number;
+  widthRatio: number;
+  leftRatio: number;
+  rowNumber: number;
+  original: RawData;
 }
 
-const Height = 20;
-
-export const transformRawData = (data: RawData[], totalWidth = 200, x = 0, y = 0) => {
+export const transformRawData = (data: RawData[], leftRatio = 0, parentRatio = 1, rowNumber = 0) => {
   const result: Data[] = [];
   let maxValue = -Infinity;
   let totalValue = 0;
@@ -25,17 +23,20 @@ export const transformRawData = (data: RawData[], totalWidth = 200, x = 0, y = 0
     totalValue += entry.value;
   });
   data.forEach(entry => {
-    const width = totalWidth * (entry.value / totalValue);
-    result.push({
+    const widthRatio = (entry.value / totalValue) * parentRatio;
+    const node: Data = {
       ...entry,
-      height: Height,
-      width,
-      x,
-      y,
+      widthRatio,
+      leftRatio,
+      rowNumber,
       color: 'red',
-    }, ...transformRawData(entry.children, width, x, y + Height));
-    x += width;
+      original: entry
+    };
+    result.push(
+      node,
+      ...transformRawData(entry.children, leftRatio, widthRatio, rowNumber + 1)
+    );
+    leftRatio += widthRatio;
   });
-  console.log(result);
   return result;
 };
