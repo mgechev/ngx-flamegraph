@@ -1,0 +1,14 @@
+<svg:rect
+      stroke="white"
+      stroke-width="2px"
+      [attr.width]="entry.width"
+      [attr.height]="entry.height"
+      [attr.fill]="entry.color">
+</svg:rect>
+<svg:foreignObject
+  [attr.width]="entry.width"
+  [attr.height]="entry.height">
+  <xhtml:div class="label">
+    {{entry.label}}
+  </xhtml:div>
+</svg:foreignObject>
