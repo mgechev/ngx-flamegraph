@@ -21,20 +21,31 @@ export interface Data {
   original: RawData;
 }
 
-export const transformRawData = (data: RawData[], parent: Data = null, leftRatio = 0, parentRatio = 1, rowNumber = 0) => {
+export const maxValue = (data: RawData[]) => {
+  return data.reduce((p, c) => {
+    return Math.max(p, c.value);
+  }, -Infinity);
+};
+
+export const transformRawData = (
+  data: RawData[],
+  maxDataValue: number,
+  parent: Data = null,
+  leftRatio = 0,
+  parentRatio = 1,
+  rowNumber = 0
+) => {
   const result: Data[] = [];
-  let minValue = Infinity;
   let totalValue = 0;
   data.forEach(entry => {
-    minValue = Math.min(minValue, entry.value);
     totalValue += entry.value;
   });
   const siblings = [];
   data.forEach(entry => {
     const widthRatio = (entry.value / totalValue) * parentRatio;
-    const intensity = entry.value / totalValue;
+    const intensity = Math.min(entry.value / maxDataValue, 1);
     const h = 50 - 50 * intensity;
-    const l = 65 + 7 * intensity;
+    const l = 65 + 5 * intensity;
     const color = entry.color || `hsl(${h}, 80%, ${l}%)`;
     const children: Data[] = [];
     const node: Data = {
@@ -55,12 +66,16 @@ export const transformRawData = (data: RawData[], parent: Data = null, leftRatio
     if (parent) {
       parent.children.push(node);
     }
-    const rest = transformRawData(entry.children || [], node, leftRatio, widthRatio, rowNumber + 1);
-    siblings.push(node);
-    result.push(
+    const rest = transformRawData(
+      entry.children || [],
+      maxDataValue,
       node,
-      ...rest
+      leftRatio,
+      widthRatio,
+      rowNumber + 1
     );
+    siblings.push(node);
+    result.push(node, ...rest);
     leftRatio += widthRatio;
   });
   return result;

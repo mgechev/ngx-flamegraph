@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Data, RawData, transformRawData} from './utils';
+import {Data, RawData, transformRawData, maxValue} from './utils';
 import {BarHeight} from './constants';
 
 @Component({
@@ -17,6 +17,6 @@ export class NgxFlamegraphComponent {
   @Input() width: number;
   @Input() height: number;
   @Input() set data(value: RawData[]) {
-    this.entries = transformRawData(value);
+    this.entries = transformRawData(value, maxValue(value));
   }
 }
