@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "ngx-flamegraph-sample",
-      "public": "dist/ngx-flamegraph-sample",
+      "public": "dist/ngx-flamegraph-sample/browser",
       "ignore": [
         "firebase.json",
         "**/.*",

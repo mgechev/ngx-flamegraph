@@ -1,4 +1,4 @@
-import {Component, ElementRef} from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,13 +6,6 @@ import {Component, ElementRef} from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  // tslint:disable-next-line:variable-name
-  constructor(private _el: ElementRef) {}
-
-  get width() {
-    return this._el.nativeElement.querySelector('.wrapper').offsetWidth;
-  }
-
   data = [
     {
       children: [

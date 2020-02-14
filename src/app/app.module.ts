@@ -9,7 +9,7 @@ import {NgxFlamegraphModule} from 'ngx-flamegraph';
     AppComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     NgxFlamegraphModule
   ],
   providers: [],
