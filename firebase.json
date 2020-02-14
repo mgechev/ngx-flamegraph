@@ -1,0 +1,19 @@
+{
+  "hosting": [
+    {
+      "target": "ngx-flamegraph-sample",
+      "public": "dist/ngx-flamegraph-sample",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "ngx-flamegraph": {
+      "hosting": {
+        "ngx-flamegraph-sample": [
+          "ngx-flamegraph"
+        ]
+      }
+    }
+  }
+}
