@@ -1,0 +1,9 @@
+.wrapper {
+  width: 80%;
+  margin: auto;
+}
+
+h2 {
+  text-align: center;
+  user-select: none;
+}

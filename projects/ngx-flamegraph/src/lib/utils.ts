@@ -55,7 +55,7 @@ export const transformRawData = (data: RawData[], parent: Data = null, leftRatio
     if (parent) {
       parent.children.push(node);
     }
-    const rest = transformRawData(entry.children, node, leftRatio, widthRatio, rowNumber + 1);
+    const rest = transformRawData(entry.children || [], node, leftRatio, widthRatio, rowNumber + 1);
     siblings.push(node);
     result.push(
       node,
