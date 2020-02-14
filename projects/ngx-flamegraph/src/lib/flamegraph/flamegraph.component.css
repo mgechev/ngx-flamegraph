@@ -14,3 +14,7 @@ svg {
   filter: grayscale(1);
   opacity: 0.3;
 }
+
+g {
+  transition: width 0.3s ease-out, transform 0.3s ease-out;
+}

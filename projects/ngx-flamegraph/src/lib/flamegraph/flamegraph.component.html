@@ -1,0 +1,18 @@
+<div class="chart-wrapper" [class.grayscale]="selectedData && selectedData.length">
+  <svg [attr.width]="width" [attr.height]="height" [attr.viewBox]="'0 0 ' + width + ' ' + height ">
+    <g flamegraph-node
+       *ngFor="let entry of entries; index as i"
+       (zoom)="select($event)"
+       [entry]="entry"
+       [height]="barHeight"
+       [width]="getWidth(entry)"
+       [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'">
+    </g>
+  </svg>
+</div>
+
+<popup
+  *ngIf="selectedData && selectedData.length"
+  [width]="width"
+  [data]="selectedData">
+</popup>

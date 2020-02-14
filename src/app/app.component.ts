@@ -6,12 +6,17 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  width = window.innerWidth;
+  width = window.innerWidth - 100;
   data = [
     {
       label: 'Root',
       value: 10,
       children: [
+        {
+          label: 'Top level',
+          value: 10,
+          children: []
+        },
         {
           label: 'Top level',
           value: 10,
@@ -35,7 +40,36 @@ export class AppComponent implements OnInit {
             {
               label: 'Child 2',
               value: 15,
-              children: []
+              children: [{
+                label: 'Child 2',
+                value: 15,
+                children: [{
+                  label: 'Child 2',
+                  value: 15,
+                  children: []
+                },{
+                  label: 'Child 2',
+                  value: 15,
+                  children: [{
+                    label: 'Child 2',
+                    value: 15,
+                    children: [{
+                      label: 'Child 2',
+                      value: 15,
+                      children: [{
+                        label: 'Child 2',
+                        value: 15,
+                        children: []
+                      }]
+                    }]
+                  }]
+                }]
+              },
+                {
+                  label: 'Child 2',
+                  value: 15,
+                  children: []
+                }]
             }
           ],
         },
@@ -67,7 +101,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     window.onresize = () => {
-      this.width = window.innerWidth;
+      this.width = window.innerWidth - 20;
     };
   }
 }

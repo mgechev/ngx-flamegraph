@@ -1,8 +1,11 @@
 <svg:rect
   (click)="select()"
   stroke="white"
-  stroke-width="2px"
+  stroke-width="3px"
   pointer-events="all"
+  rx="4"
+  ry="4"
+  [class.navigable]="entry.navigable"
   [attr.width]="width"
   [attr.height]="height"
   [attr.fill]="entry.color">
@@ -10,7 +13,7 @@
 <svg:foreignObject
   [attr.width]="width"
   [attr.height]="height">
-  <xhtml:div class="label">
+  <xhtml:div class="label" [class.navigable]="entry.navigable">
     {{entry.label}}
   </xhtml:div>
 </svg:foreignObject>

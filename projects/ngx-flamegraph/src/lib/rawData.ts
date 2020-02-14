@@ -9,32 +9,56 @@ export interface Data {
   value: number;
   color: string;
   widthRatio: number;
+  originalWidthRatio: number;
+  originalLeftRatio: number;
+  navigable: boolean;
   leftRatio: number;
   rowNumber: number;
+  siblings: Data[];
+  children: Data[];
+  parent: Data;
   original: RawData;
 }
 
-export const transformRawData = (data: RawData[], leftRatio = 0, parentRatio = 1, rowNumber = 0) => {
+export const transformRawData = (data: RawData[], parent: Data = null, leftRatio = 0, parentRatio = 1, rowNumber = 0) => {
   const result: Data[] = [];
-  let maxValue = -Infinity;
+  let minValue = Infinity;
   let totalValue = 0;
   data.forEach(entry => {
-    maxValue = Math.max(maxValue, entry.value);
+    minValue = Math.min(minValue, entry.value);
     totalValue += entry.value;
   });
+  const siblings = [];
   data.forEach(entry => {
     const widthRatio = (entry.value / totalValue) * parentRatio;
+    const intensity = entry.value / totalValue;
+    const h = 50 - 50 * intensity;
+    const l = 65 + 7 * intensity;
+    const color = `hsl(${h}, 100%, ${l}%)`;
+    const children: Data[] = [];
     const node: Data = {
-      ...entry,
+      label: entry.label,
+      value: entry.value,
+      siblings,
+      color,
       widthRatio,
+      originalWidthRatio: widthRatio,
+      originalLeftRatio: leftRatio,
       leftRatio,
+      navigable: false,
       rowNumber,
-      color: 'red',
-      original: entry
+      original: entry,
+      children,
+      parent
     };
+    if (parent) {
+      parent.children.push(node);
+    }
+    const rest = transformRawData(entry.children, node, leftRatio, widthRatio, rowNumber + 1);
+    siblings.push(node);
     result.push(
       node,
-      ...transformRawData(entry.children, leftRatio, widthRatio, rowNumber + 1)
+      ...rest
     );
     leftRatio += widthRatio;
   });

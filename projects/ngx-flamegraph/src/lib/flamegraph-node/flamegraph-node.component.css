@@ -4,8 +4,17 @@
   height: 100%;
   overflow: hidden;
   color: white;
-  padding: 3px;
+  padding: 5px;
+  font-family: sans-serif;
   font-size: 80%;
   cursor: pointer;
   user-select: none;
+}
+
+.navigable {
+  opacity: 0.5;
+}
+
+rect {
+  transition: width 0.3s ease-out, transform 0.3s ease-out;
 }

@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Data} from '@angular/router';
+import {Data} from '../rawData';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: '[ngx-flamegraph-node]',
+  selector: '[flamegraph-node]',
   templateUrl: './flamegraph-node.component.html',
   styleUrls: ['./flamegraph-node.component.css']
 })
