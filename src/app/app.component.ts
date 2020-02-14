@@ -1,11 +1,11 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {Component, ElementRef} from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   // tslint:disable-next-line:variable-name
   constructor(private _el: ElementRef) {}
 
@@ -2539,10 +2539,4 @@ export class AppComponent implements OnInit {
       value: 57412
     }
   ];
-
-  ngOnInit() {
-    window.onresize = () => {
-      this.width = window.innerWidth - 20;
-    };
-  }
 }
