@@ -2,6 +2,10 @@
 
 Flame graph for Angular. With this package you can visualize stack traces.
 
+## Demo
+
+You can try it out [here](https://ngx-flamegraph.firebaseapp.com/).
+
 ## Usage
 
 ```shell script
