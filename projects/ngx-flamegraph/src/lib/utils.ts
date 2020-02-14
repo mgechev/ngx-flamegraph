@@ -1,6 +1,7 @@
 export interface RawData {
   label: string;
   value: number;
+  color?: string;
   children: RawData[];
 }
 
@@ -34,7 +35,7 @@ export const transformRawData = (data: RawData[], parent: Data = null, leftRatio
     const intensity = entry.value / totalValue;
     const h = 50 - 50 * intensity;
     const l = 65 + 7 * intensity;
-    const color = `hsl(${h}, 80%, ${l}%)`;
+    const color = entry.color || `hsl(${h}, 80%, ${l}%)`;
     const children: Data[] = [];
     const node: Data = {
       label: entry.label,

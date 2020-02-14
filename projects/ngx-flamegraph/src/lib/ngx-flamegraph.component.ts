@@ -1,5 +1,5 @@
-import {Component, Input} from '@angular/core';
-import {Data, RawData, transformRawData} from './rawData';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Data, RawData, transformRawData} from './utils';
 import {BarHeight} from './constants';
 
 @Component({
@@ -9,6 +9,10 @@ import {BarHeight} from './constants';
 })
 export class NgxFlamegraphComponent {
   entries: Data[] = [];
+
+  @Output() frameClick = new EventEmitter<RawData>();
+  @Output() frameMouseEnter = new EventEmitter<RawData>();
+  @Output() frameMouseLeave = new EventEmitter<RawData>();
 
   @Input() width: number;
   @Input() height: number;

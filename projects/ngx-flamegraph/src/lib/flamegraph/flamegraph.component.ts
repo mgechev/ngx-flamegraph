@@ -1,4 +1,4 @@
-import {Data, transformRawData} from '../rawData';
+import {Data, RawData, transformRawData} from '../utils';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {BarHeight} from '../constants';
 
@@ -11,6 +11,10 @@ import {BarHeight} from '../constants';
 export class FlamegraphComponent {
   selectedData: Data[] = [];
   entries: Data[] = [];
+
+  @Output() frameClick = new EventEmitter<RawData>();
+  @Output() frameMouseEnter = new EventEmitter<RawData>();
+  @Output() frameMouseLeave = new EventEmitter<RawData>();
 
   @Input() width: number;
   @Input() height: number;

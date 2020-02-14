@@ -3,12 +3,11 @@ import {CommonModule} from '@angular/common';
 
 import { NgxFlamegraphComponent } from './ngx-flamegraph.component';
 import {FlamegraphNodeComponent} from './flamegraph-node/flamegraph-node.component';
-import {PopupComponent} from './popup/popup.component';
 import {FlamegraphComponent} from './flamegraph/flamegraph.component';
 
 
 @NgModule({
-  declarations: [NgxFlamegraphComponent, FlamegraphNodeComponent, PopupComponent, FlamegraphComponent],
+  declarations: [NgxFlamegraphComponent, FlamegraphNodeComponent, FlamegraphComponent],
   imports: [
     CommonModule
   ],

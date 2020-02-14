@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Data} from '../rawData';
+import {Data} from '../utils';
 
 @Component({
   // tslint:disable-next-line:component-selector

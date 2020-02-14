@@ -1,1 +1,8 @@
-<flamegraph [data]="entries" [height]="height" [width]="width"></flamegraph>
+<flamegraph
+  (frameClick)="frameClick.emit($event)"
+  (frameMouseEnter)="frameMouseEnter.emit($event)"
+  (frameMouseLeave)="frameMouseLeave.emit($event)"
+  [data]="entries"
+  [height]="height"
+  [width]="width">
+</flamegraph>
