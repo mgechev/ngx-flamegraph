@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Data, RawData, transformRawData, maxValue} from './utils';
-import {BarHeight} from './constants';
+import {Data, RawData, transformRawData, maxValue, SiblingLayout} from './utils';
 
 @Component({
   selector: 'ngx-flamegraph',
@@ -14,9 +13,10 @@ export class NgxFlamegraphComponent {
   @Output() frameMouseEnter = new EventEmitter<RawData>();
   @Output() frameMouseLeave = new EventEmitter<RawData>();
 
+  @Input() siblingLayout: SiblingLayout = 'relative';
   @Input() width: number;
   @Input() height: number;
   @Input() set data(value: RawData[]) {
-    this.entries = transformRawData(value, maxValue(value));
+    this.entries = transformRawData(value, this.siblingLayout, maxValue(value));
   }
 }

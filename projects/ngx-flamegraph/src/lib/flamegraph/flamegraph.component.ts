@@ -1,4 +1,4 @@
-import {Data, RawData, transformRawData} from '../utils';
+import {Data, RawData, SiblingLayout} from '../utils';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {BarHeight} from '../constants';
 
@@ -18,6 +18,7 @@ export class FlamegraphComponent {
 
   @Input() width: number;
   @Input() height: number;
+  @Input() layout: SiblingLayout;
 
   @Input() set data(data: Data[]) {
     this.entries = data;
@@ -43,7 +44,7 @@ export class FlamegraphComponent {
     if (entry.navigable) {
       restore(entry);
     }
-    transformData(entry);
+    transformData(entry, this.layout);
   }
 
   clearSelection() {
@@ -93,7 +94,7 @@ const hideSiblings = (node: Data) => {
   }
 };
 
-const transformData = (focused: Data) => {
+const transformData = (focused: Data, layout: SiblingLayout) => {
   let current = focused;
   while (current) {
     current.widthRatio = 1;
@@ -104,19 +105,22 @@ const transformData = (focused: Data) => {
       current.navigable = true;
     }
   }
-  adjustChildren(focused.children);
+  adjustChildren(focused.children, layout);
 };
 
-const adjustChildren = (data: Data[], leftRatio = 0, parentRatio = 1) => {
+const adjustChildren = (data: Data[], layout: SiblingLayout, leftRatio = 0, parentRatio = 1) => {
   let totalValue = 0;
   data.forEach(entry => {
     totalValue += entry.value;
   });
   data.forEach((entry) => {
-    const widthRatio = (entry.value / totalValue) * parentRatio;
+    let widthRatio = (entry.value / totalValue) * parentRatio;
+    if (layout === 'equal') {
+      widthRatio = parentRatio / data.length;
+    }
     entry.widthRatio = widthRatio;
     entry.leftRatio = leftRatio;
-    adjustChildren(entry.children, leftRatio, widthRatio);
+    adjustChildren(entry.children, layout, leftRatio, widthRatio);
     leftRatio += widthRatio;
   });
 };

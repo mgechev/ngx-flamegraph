@@ -21,6 +21,8 @@ export interface Data {
   original: RawData;
 }
 
+export type SiblingLayout = 'relative' | 'equal';
+
 export const maxValue = (data: RawData[]) => {
   return data.reduce((p, c) => {
     return Math.max(p, c.value);
@@ -29,6 +31,7 @@ export const maxValue = (data: RawData[]) => {
 
 export const transformRawData = (
   data: RawData[],
+  layout: 'relative' | 'equal',
   maxDataValue: number,
   parent: Data = null,
   leftRatio = 0,
@@ -42,7 +45,10 @@ export const transformRawData = (
   });
   const siblings = [];
   data.forEach(entry => {
-    const widthRatio = ((entry.value / totalValue) * parentRatio) || 0;
+    let widthRatio = parentRatio / data.length;
+    if (layout === 'relative') {
+      widthRatio = ((entry.value / totalValue) * parentRatio) || 0;
+    }
     const intensity = Math.min(entry.value / maxDataValue, 1);
     const h = 50 - 50 * intensity;
     const l = 65 + 5 * intensity;
@@ -68,6 +74,7 @@ export const transformRawData = (
     }
     const rest = transformRawData(
       entry.children || [],
+      layout,
       maxDataValue,
       node,
       leftRatio,

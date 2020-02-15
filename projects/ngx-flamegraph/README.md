@@ -44,6 +44,7 @@ interface Data {
        [frameClick]="handleClick($event)"
        [frameMouseEnter]="handleMouseEnter($event)"
        [frameMouseLeave]="handleMouseLeave($event)"
+       siblingLayout="relative"
        [width]="width"
        [height]="200">
     </ngx-flamegraph>
@@ -75,6 +76,13 @@ export class AppComponent implements OnInit {
   }
 }
 ```
+
+## Configuration
+
+- `data` - property of type `RawData[]`. `RawData` is the same interface as `Data` in the example above.
+- `siblingLayout` - `equal` or `relative`. Equal will set all the siblings with the same width, compared to `relative`, which will look at their values relative to the sum of the values of all the siblings.
+- `width` - sets the width of the chart.
+- `height` - sets the height of the chart.
 
 ## Related work
 
