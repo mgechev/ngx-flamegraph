@@ -36,7 +36,7 @@ export class FlamegraphComponent {
   }
 
   getWidth(entry: Data) {
-    return entry.widthRatio * this.width;
+    return (entry.widthRatio * this.width) || 0;
   }
 
   select(entry: Data) {

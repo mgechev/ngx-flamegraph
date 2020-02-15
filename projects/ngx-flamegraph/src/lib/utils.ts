@@ -42,7 +42,7 @@ export const transformRawData = (
   });
   const siblings = [];
   data.forEach(entry => {
-    const widthRatio = (entry.value / totalValue) * parentRatio;
+    const widthRatio = ((entry.value / totalValue) * parentRatio) || 0;
     const intensity = Math.min(entry.value / maxDataValue, 1);
     const h = 50 - 50 * intensity;
     const l = 65 + 5 * intensity;
