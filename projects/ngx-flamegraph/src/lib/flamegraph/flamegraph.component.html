@@ -7,7 +7,7 @@
        (mouseleave)="frameMouseLeave.emit(entry.original)"
        (zoom)="select($event)"
        [entry]="entry"
-       [height]="barHeight"
+       [height]="levelHeight"
        [width]="getWidth(entry)"
        [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'">
     </g>

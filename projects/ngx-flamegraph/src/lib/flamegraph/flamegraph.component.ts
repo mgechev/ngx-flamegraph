@@ -1,6 +1,5 @@
 import {Data, RawData, SiblingLayout} from '../utils';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BarHeight} from '../constants';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -17,19 +16,23 @@ export class FlamegraphComponent {
   @Output() frameMouseLeave = new EventEmitter<RawData>();
 
   @Input() width: number;
-  @Input() height: number;
+  @Input() levelHeight = 25;
   @Input() layout: SiblingLayout;
+
 
   @Input() set data(data: Data[]) {
     this.entries = data;
+    this._depth = findHeight(data);
   }
 
-  get barHeight() {
-    return BarHeight;
+  private _depth = 0;
+
+  get height() {
+    return this.levelHeight * this._depth;
   }
 
   getTop(entry: Data) {
-    return entry.rowNumber * BarHeight;
+    return entry.rowNumber * this.levelHeight;
   }
 
   getLeft(entry: Data) {
@@ -130,4 +133,15 @@ const restore = (entry: Data) => {
   entry.leftRatio = entry.originalLeftRatio;
   entry.widthRatio = entry.originalWidthRatio;
   entry.children.forEach(restore);
+};
+
+const findHeight = (data: Data[]) => {
+  if (!data.length) {
+    return 0;
+  }
+  let result = 0;
+  for (const row of data) {
+    result = Math.max(1 + findHeight(row.children), result);
+  }
+  return result;
 };
