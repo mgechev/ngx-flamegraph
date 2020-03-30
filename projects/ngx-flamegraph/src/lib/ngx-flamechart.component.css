@@ -4,10 +4,11 @@ svg {
 
 :host {
   position: relative;
+  display: block;
 }
 
 .chart-wrapper {
-  position: absolute;
+  position: relative;
 }
 
 .grayscale {

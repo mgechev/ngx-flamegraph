@@ -18,16 +18,14 @@ export class FlamegraphComponent {
   @Input() width: number;
   @Input() levelHeight: number;
   @Input() layout: SiblingLayout;
+  @Input() depth: number;
 
   @Input() set data(data: Data[]) {
     this.entries = data;
-    this._depth = findDepth(data);
   }
 
-  private _depth = 0;
-
   get height() {
-    return this.levelHeight * this._depth;
+    return this.levelHeight * this.depth;
   }
 
   getTop(entry: Data) {
@@ -97,7 +95,7 @@ const hideSiblings = (node: Data) => {
 };
 
 const transformData = (focused: Data, layout: SiblingLayout) => {
-  let current = focused;
+  let current: Data | null = focused;
   while (current) {
     current.widthRatio = 1;
     current.leftRatio = 0;
@@ -137,15 +135,4 @@ const restore = (entry: Data) => {
   entry.leftRatio = entry.originalLeftRatio;
   entry.widthRatio = entry.originalWidthRatio;
   entry.children.forEach(restore);
-};
-
-const findDepth = (data: Data[]) => {
-  if (!data.length) {
-    return 0;
-  }
-  let result = 0;
-  for (const row of data) {
-    result = Math.max(1 + findDepth(row.children), result);
-  }
-  return result;
 };

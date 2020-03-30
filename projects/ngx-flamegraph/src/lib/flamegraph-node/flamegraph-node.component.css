@@ -16,5 +16,5 @@
 }
 
 rect {
-  transition: width 0.3s ease-out, transform 0.3s ease-out;
+  transition: width 0.2s ease-out, transform 0.2s ease-out;
 }

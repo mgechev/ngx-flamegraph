@@ -17,7 +17,7 @@ export interface Data {
   rowNumber: number;
   siblings: Data[];
   children: Data[];
-  parent: Data;
+  parent: Data | null;
   original: RawData;
 }
 
@@ -33,7 +33,7 @@ export const transformRawData = (
   data: RawData[],
   layout: 'relative' | 'equal',
   maxDataValue: number,
-  parent: Data = null,
+  parent: Data | null = null,
   leftRatio = 0,
   parentRatio = 1,
   rowNumber = 0
@@ -43,7 +43,7 @@ export const transformRawData = (
   data.forEach(entry => {
     totalValue += entry.value;
   });
-  const siblings = [];
+  const siblings: Data[] = [];
   data.forEach(entry => {
     let widthRatio = parentRatio / data.length;
     if (layout === 'relative') {
