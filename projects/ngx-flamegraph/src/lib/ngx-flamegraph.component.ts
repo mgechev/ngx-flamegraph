@@ -16,7 +16,7 @@ export class NgxFlamegraphComponent {
 
   @Input() siblingLayout: SiblingLayout = 'relative';
   @Input() width: number;
-  @Input() levelHeight: number;
+  @Input() levelHeight = 25;
   @Input() set data(value: RawData[]) {
     this.entries = transformRawData(value, this.siblingLayout, maxValue(value));
   }

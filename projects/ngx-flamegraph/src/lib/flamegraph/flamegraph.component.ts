@@ -1,5 +1,5 @@
-import {Data, RawData, SiblingLayout} from '../utils';
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Data, RawData, SiblingLayout } from '../utils';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -16,13 +16,12 @@ export class FlamegraphComponent {
   @Output() frameMouseLeave = new EventEmitter<RawData>();
 
   @Input() width: number;
-  @Input() levelHeight = 25;
+  @Input() levelHeight: number;
   @Input() layout: SiblingLayout;
-
 
   @Input() set data(data: Data[]) {
     this.entries = data;
-    this._depth = findHeight(data);
+    this._depth = findDepth(data);
   }
 
   private _depth = 0;
@@ -40,7 +39,7 @@ export class FlamegraphComponent {
   }
 
   getWidth(entry: Data) {
-    return (entry.widthRatio * this.width) || 0;
+    return entry.widthRatio * this.width || 0;
   }
 
   select(entry: Data) {
@@ -111,12 +110,17 @@ const transformData = (focused: Data, layout: SiblingLayout) => {
   adjustChildren(focused.children, layout);
 };
 
-const adjustChildren = (data: Data[], layout: SiblingLayout, leftRatio = 0, parentRatio = 1) => {
+const adjustChildren = (
+  data: Data[],
+  layout: SiblingLayout,
+  leftRatio = 0,
+  parentRatio = 1
+) => {
   let totalValue = 0;
   data.forEach(entry => {
     totalValue += entry.value;
   });
-  data.forEach((entry) => {
+  data.forEach(entry => {
     let widthRatio = (entry.value / totalValue) * parentRatio;
     if (layout === 'equal') {
       widthRatio = parentRatio / data.length;
@@ -135,13 +139,13 @@ const restore = (entry: Data) => {
   entry.children.forEach(restore);
 };
 
-const findHeight = (data: Data[]) => {
+const findDepth = (data: Data[]) => {
   if (!data.length) {
     return 0;
   }
   let result = 0;
   for (const row of data) {
-    result = Math.max(1 + findHeight(row.children), result);
+    result = Math.max(1 + findDepth(row.children), result);
   }
   return result;
 };

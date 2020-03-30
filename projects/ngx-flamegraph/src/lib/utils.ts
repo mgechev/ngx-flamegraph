@@ -25,7 +25,7 @@ export type SiblingLayout = 'relative' | 'equal';
 
 export const maxValue = (data: RawData[]) => {
   return data.reduce((p, c) => {
-    return Math.max(p, c.value);
+    return Math.max(p, c.value, maxValue(c.children || []));
   }, -Infinity);
 };
 
@@ -52,7 +52,7 @@ export const transformRawData = (
     const intensity = Math.min(entry.value / maxDataValue, 1);
     const h = 50 - 50 * intensity;
     const l = 65 + 5 * intensity;
-    const color = entry.color || `hsl(${h}, 80%, ${l}%)`;
+    const color = entry.color || `hsl(${h || 0}, 80%, ${l || 0}%)`;
     const children: Data[] = [];
     const node: Data = {
       label: entry.label,
