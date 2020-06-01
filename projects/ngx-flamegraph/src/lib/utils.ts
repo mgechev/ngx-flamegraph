@@ -1,3 +1,15 @@
+export interface FlamegraphColor {
+  hue: number | [number, number];
+  saturation: number | [number, number];
+  lightness: number | [number, number];
+}
+
+export interface Color {
+  hue: [number, number];
+  saturation: [number, number];
+  lightness: [number, number];
+}
+
 export interface RawData {
   label: string;
   value: number;
@@ -29,10 +41,14 @@ export const maxValue = (data: RawData[]) => {
   }, -Infinity);
 };
 
+const getComponent = ([min, max]: [number, number], intensity: number) =>
+  min + (max - min) * intensity;
+
 export const transformRawData = (
   data: RawData[],
   layout: 'relative' | 'equal',
   maxDataValue: number,
+  colors: Color,
   parent: Data | null = null,
   leftRatio = 0,
   parentRatio = 1,
@@ -40,19 +56,21 @@ export const transformRawData = (
 ) => {
   const result: Data[] = [];
   let totalValue = 0;
-  data.forEach(entry => {
+  data.forEach((entry) => {
     totalValue += entry.value;
   });
   const siblings: Data[] = [];
-  data.forEach(entry => {
+  data.forEach((entry) => {
     let widthRatio = parentRatio / data.length;
     if (layout === 'relative') {
-      widthRatio = ((entry.value / totalValue) * parentRatio) || 0;
+      widthRatio = (entry.value / totalValue) * parentRatio || 0;
     }
     const intensity = Math.min(entry.value / maxDataValue, 1);
-    const h = 50 - 50 * intensity;
-    const l = 65 + 5 * intensity;
-    const color = entry.color || `hsl(${h || 0}, 80%, ${l || 0}%)`;
+    const color =
+      entry.color ||
+      `hsl(${getComponent(colors.hue, intensity) ?? 0}, ${
+        getComponent(colors.saturation, intensity) ?? 80
+      }%, ${getComponent(colors.lightness, intensity) ?? 0}%)`;
     const children: Data[] = [];
     const node: Data = {
       label: entry.label,
@@ -67,7 +85,7 @@ export const transformRawData = (
       rowNumber,
       original: entry,
       children,
-      parent
+      parent,
     };
     if (parent) {
       parent.children.push(node);
@@ -76,6 +94,7 @@ export const transformRawData = (
       entry.children || [],
       layout,
       maxDataValue,
+      colors,
       node,
       leftRatio,
       widthRatio,
