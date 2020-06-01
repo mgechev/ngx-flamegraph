@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy} from '@angular/core';
-import {Data, RawData, transformRawData, maxValue, SiblingLayout} from './utils';
+import {Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color} from './utils';
+import { defaultColors } from './constants';
 
 @Component({
   selector: 'ngx-flamegraph',
@@ -15,11 +16,18 @@ export class NgxFlamegraphComponent {
   @Output() frameMouseEnter = new EventEmitter<RawData>();
   @Output() frameMouseLeave = new EventEmitter<RawData>();
 
+  @Input() colors: FlamegraphColor;
   @Input() siblingLayout: SiblingLayout = 'relative';
   @Input() width: number;
   @Input() levelHeight = 25;
   @Input() set data(roots: RawData[]) {
-    this.entries = transformRawData(roots, this.siblingLayout, maxValue(roots));
+    const { hue, saturation, lightness } = this.colors ?? defaultColors;
+    const colors: Color = {
+      hue: Array.isArray(hue) ? hue : [hue, hue],
+      saturation: Array.isArray(saturation) ? saturation : [saturation, saturation],
+      lightness: Array.isArray(lightness) ? lightness : [lightness, lightness]
+    };
+    this.entries = transformRawData(roots, this.siblingLayout, maxValue(roots), colors);
     this.depth = findDepth(roots);
   }
 }
