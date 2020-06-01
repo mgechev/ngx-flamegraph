@@ -6,6 +6,13 @@ import {Component} from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  colors = {
+    hue: [60, 0],
+    saturation: [80, 80],
+    lightness: [20, 40]
+  };
+
   data = [
     {
       children: [
