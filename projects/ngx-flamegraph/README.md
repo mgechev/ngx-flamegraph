@@ -40,7 +40,7 @@ interface Data {
   selector: 'app-root',
   template: `
     <ngx-flamegraph
-       [data]="data"
+       [config]="{ data, color }"
        [frameClick]="handleClick($event)"
        [frameMouseEnter]="handleMouseEnter($event)"
        [frameMouseLeave]="handleMouseLeave($event)"
@@ -52,6 +52,13 @@ interface Data {
 })
 export class AppComponent implements OnInit {
   width = window.innerWidth - 100;
+
+  // Optional property.
+  color = {
+    hue: [50, 0],
+    saturation: [80, 80],
+    lightness: [55, 60]
+  };
   data = [
     {
       label: 'root',
