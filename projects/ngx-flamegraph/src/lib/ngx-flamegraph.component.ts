@@ -2,6 +2,11 @@ import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy} from '@
 import {Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color} from './utils';
 import { defaultColors } from './constants';
 
+export interface FlameGraphConfig {
+  color?: FlamegraphColor;
+  data: RawData[];
+}
+
 @Component({
   selector: 'ngx-flamegraph',
   templateUrl: './ngx-flamegraph.component.html',
@@ -24,17 +29,15 @@ export class NgxFlamegraphComponent {
   @Input() siblingLayout: SiblingLayout = 'relative';
   @Input() width: number;
   @Input() levelHeight = 25;
-  @Input() set colors(colors: FlamegraphColor) {
-    this._colors = colors;
-    this._setData();
-  }
-  @Input() set data(data: RawData[]) {
-    this._data = data;
-    this._setData();
+
+  @Input() set config(config: FlameGraphConfig) {
+    this._data = config.data;
+    this._colors = config.color ?? defaultColors;
+    this._refresh();
   }
 
-  private _setData() {
-    const { hue, saturation, lightness } = this._colors ?? defaultColors;
+  private _refresh() {
+    const { hue, saturation, lightness } = this._colors;
     const colors: Color = {
       hue: Array.isArray(hue) ? hue : [hue, hue],
       saturation: Array.isArray(saturation) ? saturation : [saturation, saturation],
