@@ -1,7 +1,9 @@
 <div class="chart-wrapper" [class.grayscale]="selectedData && selectedData.length">
   <svg [attr.width]="width" [attr.height]="height" [attr.viewBox]="'0 0 ' + width + ' ' + height ">
     <g flamegraph-node
-       *ngFor="let entry of entries; index as i"
+       *ngxFlamegraphFor="let entry of entries; index as i"
+       ngxFlamegraphForHeight="height"
+       ngxFlamegraphForItemHeight="levelHeight"
        (click)="frameClick.emit(entry.original)"
        (mouseover)="frameMouseEnter.emit(entry.original)"
        (mouseleave)="frameMouseLeave.emit(entry.original)"
