@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { NgxFlamegraphComponent } from './ngx-flamegraph.component';
 
@@ -6,7 +6,7 @@ describe('NgxFlamegraphComponent', () => {
   let component: NgxFlamegraphComponent;
   let fixture: ComponentFixture<NgxFlamegraphComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ NgxFlamegraphComponent ]
     })
