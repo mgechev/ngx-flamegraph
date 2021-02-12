@@ -1,11 +1,12 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewEncapsulation} from '@angular/core';
 import {Data} from '../utils';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: '[flamegraph-node]',
   templateUrl: './flamegraph-node.component.html',
-  styleUrls: ['./flamegraph-node.component.css']
+  styleUrls: ['./flamegraph-node.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class FlamegraphNodeComponent {
   @Input() entry: Data;

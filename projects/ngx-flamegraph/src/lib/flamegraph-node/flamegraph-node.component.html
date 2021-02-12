@@ -5,7 +5,8 @@
   pointer-events="all"
   rx="1"
   ry="1"
-  [class.navigable]="entry.navigable"
+  class="ngx-fg-rect"
+  [class.ngx-fg-navigable]="entry.navigable"
   [attr.width]="width"
   [attr.height]="height"
   [attr.fill]="entry.color">
@@ -13,7 +14,7 @@
 <svg:foreignObject
   [attr.width]="width"
   [attr.height]="height">
-  <xhtml:div class="label" [class.navigable]="entry.navigable">
+  <xhtml:div class="ngx-fg-label" [class.ngx-fg-navigable]="entry.navigable">
     {{entry.label}}
   </xhtml:div>
 </svg:foreignObject>

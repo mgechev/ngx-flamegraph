@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
 import {Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color} from './utils';
 import { defaultColors } from './constants';
 
@@ -11,7 +11,8 @@ export interface FlameGraphConfig {
   selector: 'ngx-flamegraph',
   templateUrl: './ngx-flamegraph.component.html',
   styleUrls: ['./ngx-flamechart.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class NgxFlamegraphComponent {
   entries: Data[] = [];

@@ -1,4 +1,4 @@
-.label {
+.ngx-fg-label {
   text-overflow: ellipsis;
   width: 100%;
   height: 100%;
@@ -11,10 +11,10 @@
   user-select: none;
 }
 
-.navigable {
+.ngx-fg-navigable {
   opacity: 0.5;
 }
 
-rect {
+.ngx-fg-rect {
   transition: width 0.2s ease-out, transform 0.2s ease-out;
 }

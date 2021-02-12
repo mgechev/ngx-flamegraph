@@ -1,11 +1,12 @@
 import { Data, RawData, SiblingLayout } from '../utils';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'flamegraph',
+  selector: 'ngx-flamegraph-graph',
   templateUrl: './flamegraph.component.html',
-  styleUrls: ['./flamegraph.component.css']
+  styleUrls: ['./flamegraph.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class FlamegraphComponent {
   selectedData: Data[] = [];

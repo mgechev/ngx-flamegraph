@@ -1,5 +1,5 @@
-<div class="chart-wrapper" [class.grayscale]="selectedData && selectedData.length">
-  <svg [attr.width]="width" [attr.height]="height" [attr.viewBox]="'0 0 ' + width + ' ' + height ">
+<div class="ngx-fg-chart-wrapper" [class.ngx-fg-grayscale]="selectedData && selectedData.length">
+  <svg class="ngx-fg-svg" [attr.width]="width" [attr.height]="height" [attr.viewBox]="'0 0 ' + width + ' ' + height ">
     <g flamegraph-node
        *ngFor="let entry of entries; index as i"
        (click)="frameClick.emit(entry.original)"
@@ -9,6 +9,7 @@
        [entry]="entry"
        [height]="levelHeight"
        [width]="getWidth(entry)"
+       class="ngx-fg-svg-g"
        [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'">
     </g>
   </svg>

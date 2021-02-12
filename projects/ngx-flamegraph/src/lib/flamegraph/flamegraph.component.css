@@ -1,21 +1,21 @@
-svg {
+.ngx-fg-svg {
   pointer-events: none;
 }
 
-:host {
+ngx-flamegraph-graph {
   position: relative;
   display: block;
 }
 
-.chart-wrapper {
+.ngx-fg-chart-wrapper {
   position: relative;
 }
 
-.grayscale {
+.ngx-fg-grayscale {
   filter: grayscale(1);
   opacity: 0.2;
 }
 
-g {
+.ngx-fg-svg-g {
   transition: width 0.2s ease-out, transform 0.2s ease-out;
 }
