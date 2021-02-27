@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
-import {Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color} from './utils';
+/// <reference types="resize-observer-browser" />
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color, restore, findDepth, transformData } from './utils';
 import { defaultColors } from './constants';
 
 export interface FlameGraphConfig {
@@ -12,9 +13,9 @@ export interface FlameGraphConfig {
   templateUrl: './ngx-flamegraph.component.html',
   styleUrls: ['./ngx-flamechart.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-export class NgxFlamegraphComponent {
+export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   entries: Data[] = [];
   depth = 0;
 
@@ -28,13 +29,40 @@ export class NgxFlamegraphComponent {
   @Output() frameMouseLeave = new EventEmitter<RawData>();
 
   @Input() siblingLayout: SiblingLayout = 'relative';
-  @Input() width: number;
+  @Input() width: number | null = null;
   @Input() levelHeight = 25;
 
   @Input() set config(config: FlameGraphConfig) {
     this._data = config.data;
     this._colors = config.color ?? defaultColors;
     this._refresh();
+  }
+
+  private _resizeObserver: ResizeObserver;
+
+  constructor(private _el: ElementRef, public cdr: ChangeDetectorRef) { }
+
+  ngOnInit(): void {
+    const parent = this._el.nativeElement?.parentElement;
+    if (parent && this.width === null) {
+      this._resizeObserver = new ResizeObserver(() => this._onParentResize());
+      this._resizeObserver.observe(parent);
+    }
+  }
+
+  ngOnDestroy(): void {
+    const parent = this._el.nativeElement?.parentElement;
+    if (parent && this._resizeObserver) {
+      this._resizeObserver.unobserve(parent);
+    }
+  }
+
+  private _onParentResize(): void {
+    const parent = this._el.nativeElement?.parentElement;
+    if (parent) {
+      this.width = parent.clientWidth;
+      this.cdr.detectChanges();
+    }
   }
 
   private _refresh() {
@@ -47,18 +75,12 @@ export class NgxFlamegraphComponent {
     this.entries = transformRawData(this._data, this.siblingLayout, maxValue(this._data), colors);
     this.depth = findDepth(this._data);
   }
-}
 
-const findDepth = (data: RawData[] | undefined) => {
-  if (!data) {
-    return 0;
+  onZoom(entry: Data): void {
+    if (entry.navigable) {
+      restore(entry);
+    }
+    transformData(entry, this.siblingLayout);
+    this.cdr.detectChanges();
   }
-  if (!data.length) {
-    return 0;
-  }
-  let result = 0;
-  for (const row of data) {
-    result = Math.max(1 + findDepth(row.children), result);
-  }
-  return result;
-};
+}

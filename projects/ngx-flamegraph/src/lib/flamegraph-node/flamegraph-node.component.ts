@@ -13,8 +13,4 @@ export class FlamegraphNodeComponent {
   @Input() height: number;
   @Input() width: number;
   @Output() zoom = new EventEmitter();
-
-  select() {
-    this.zoom.emit(this.entry);
-  }
 }

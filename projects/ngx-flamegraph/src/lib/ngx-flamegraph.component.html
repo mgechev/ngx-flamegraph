@@ -1,7 +1,9 @@
 <ngx-flamegraph-graph
+  *ngIf="width !== null"
   (frameClick)="frameClick.emit($event)"
   (frameMouseEnter)="frameMouseEnter.emit($event)"
   (frameMouseLeave)="frameMouseLeave.emit($event)"
+  (zoom)="onZoom($event)"
   [layout]="siblingLayout"
   [data]="entries"
   [depth]="depth"
