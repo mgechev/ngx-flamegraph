@@ -1,5 +1,5 @@
 /// <reference types="resize-observer-browser" />
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone } from '@angular/core';
 import { Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color, restore, findDepth, transformData } from './utils';
 import { defaultColors } from './constants';
 
@@ -42,13 +42,18 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
 
   private _resizeObserver: ResizeObserver;
 
-  constructor(private _el: ElementRef, public cdr: ChangeDetectorRef) { }
+  constructor(private _el: ElementRef, public cdr: ChangeDetectorRef, private _ngZone: NgZone) { }
 
   ngOnInit(): void {
     const parent = this._el.nativeElement?.parentElement;
     if (parent && this.width === null && isResizeObserverAvailable) {
-      this._resizeObserver = new ResizeObserver(() => this._onParentResize());
+      // Explicitly fire ResizeObserver callback inside the Angular zone
+      // because ResizeObserver is not patched by zone.js by default
+      this._resizeObserver = new ResizeObserver(() =>
+        this._ngZone.run(() => this._onParentResize())
+      );
       this._resizeObserver.observe(parent);
+      
     }
   }
 
@@ -63,7 +68,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
     const parent = this._el.nativeElement?.parentElement;
     if (parent) {
       this.width = parent.clientWidth;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     }
   }
 
@@ -83,6 +88,5 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
       restore(entry);
     }
     transformData(entry, this.siblingLayout);
-    this.cdr.detectChanges();
   }
 }
