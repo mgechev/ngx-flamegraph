@@ -8,6 +8,8 @@ export interface FlameGraphConfig {
   data: RawData[];
 }
 
+const isResizeObserverAvailable = typeof ResizeObserver !== 'undefined';
+
 @Component({
   selector: 'ngx-flamegraph',
   templateUrl: './ngx-flamegraph.component.html',
@@ -44,7 +46,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const parent = this._el.nativeElement?.parentElement;
-    if (parent && this.width === null) {
+    if (parent && this.width === null && isResizeObserverAvailable) {
       this._resizeObserver = new ResizeObserver(() => this._onParentResize());
       this._resizeObserver.observe(parent);
     }
@@ -52,7 +54,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     const parent = this._el.nativeElement?.parentElement;
-    if (parent && this._resizeObserver) {
+    if (parent && this._resizeObserver && isResizeObserverAvailable) {
       this._resizeObserver.unobserve(parent);
     }
   }
