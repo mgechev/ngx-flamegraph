@@ -5,7 +5,7 @@
        (click)="frameClick.emit(entry.original)"
        (mouseover)="frameMouseEnter.emit(entry.original)"
        (mouseleave)="frameMouseLeave.emit(entry.original)"
-       (zoom)="select($event)"
+       (zoom)="zoom.emit($event)"
        [entry]="entry"
        [height]="levelHeight"
        [width]="getWidth(entry)"

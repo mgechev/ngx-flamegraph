@@ -1,9 +1,15 @@
-.wrapper {
+.wrapper-fixed-width {
   width: 900px;
+  margin: auto;
+
+}
+
+.wrapper-responsive {
+  width: 70%;
   margin: auto;
 }
 
-h2 {
+h2, h3 {
   text-align: center;
   user-select: none;
 }
