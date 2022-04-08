@@ -53,7 +53,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
         this._ngZone.run(() => this._onParentResize())
       );
       this._resizeObserver.observe(parent);
-      
+
     }
   }
 
@@ -88,5 +88,21 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
       restore(entry);
     }
     transformData(entry, this.siblingLayout);
+  }
+
+  onFrameMouseEnter(data: RawData): void {
+    if (this.frameMouseEnter.observers.length === 0) {
+      return;
+    }
+
+    this._ngZone.run(() => this.frameMouseEnter.emit(data));
+  }
+
+  onFrameMouseLeave(data: RawData): void {
+    if (this.frameMouseLeave.observers.length === 0) {
+      return;
+    }
+
+    this._ngZone.run(() => this.frameMouseLeave.emit(data));
   }
 }
