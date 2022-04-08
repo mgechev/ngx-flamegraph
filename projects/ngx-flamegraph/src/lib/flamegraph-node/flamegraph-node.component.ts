@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, ViewEncapsulation} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import {Data} from '../utils';
 
 @Component({
@@ -6,7 +6,8 @@ import {Data} from '../utils';
   selector: '[flamegraph-node]',
   templateUrl: './flamegraph-node.component.html',
   styleUrls: ['./flamegraph-node.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlamegraphNodeComponent {
   @Input() entry: Data;
