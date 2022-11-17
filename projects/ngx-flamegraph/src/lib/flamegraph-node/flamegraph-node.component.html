@@ -1,20 +1,13 @@
 <svg:rect
-  (dblclick)="zoom.emit(entry)"
+  (dblclick)="zoom.emit()"
   stroke="white"
   stroke-width="1px"
   pointer-events="all"
+  width="100%"
   rx="1"
   ry="1"
   class="ngx-fg-rect"
-  [class.ngx-fg-navigable]="entry.navigable"
-  [attr.width]="width"
+  [class.ngx-fg-navigable]="navigable"
   [attr.height]="height"
-  [attr.fill]="entry.color">
+  [attr.fill]="color">
 </svg:rect>
-<svg:foreignObject
-  [attr.width]="width"
-  [attr.height]="height">
-  <xhtml:div class="ngx-fg-label" [class.ngx-fg-navigable]="entry.navigable">
-    {{entry.label}}
-  </xhtml:div>
-</svg:foreignObject>

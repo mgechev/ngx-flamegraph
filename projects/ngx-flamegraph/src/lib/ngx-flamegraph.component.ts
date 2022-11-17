@@ -1,11 +1,12 @@
 /// <reference types="resize-observer-browser" />
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone, HostBinding } from '@angular/core';
 import { Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color, restore, findDepth, transformData } from './utils';
 import { defaultColors } from './constants';
 
 export interface FlameGraphConfig {
   color?: FlamegraphColor;
   data: RawData[];
+  minimumBarSize?: number // smallest that a bar can be in pixels and still be rendered
 }
 
 const isResizeObserverAvailable = typeof ResizeObserver !== 'undefined';
@@ -34,13 +35,20 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   @Input() width: number | null = null;
   @Input() levelHeight = 25;
 
+  minimumBarSize: number;
+
   @Input() set config(config: FlameGraphConfig) {
     this._data = config.data;
     this._colors = config.color ?? defaultColors;
+    this.minimumBarSize = config.minimumBarSize ?? 2;
     this._refresh();
   }
 
   private _resizeObserver: ResizeObserver;
+
+  @HostBinding('attr.style') get hostStyles() {
+    return `height: ${this.depth * this.levelHeight}px `;
+  }
 
   constructor(private _el: ElementRef, public cdr: ChangeDetectorRef, private _ngZone: NgZone) { }
 

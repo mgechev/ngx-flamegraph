@@ -8,5 +8,9 @@
   [data]="entries"
   [depth]="depth"
   [levelHeight]="levelHeight"
-  [width]="width">
+  [width]="width"
+  [style.height.px]="depth * levelHeight"
+  [style.width.px]="width"
+  [minimumBarSize]="minimumBarSize"
+  >
 </ngx-flamegraph-graph>

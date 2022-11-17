@@ -22,6 +22,8 @@ export class FlamegraphComponent {
   @Input() levelHeight: number;
   @Input() layout: SiblingLayout;
   @Input() depth: number;
+  @Input() minimumBarSize: number|undefined;
+
 
   @Input() set data(data: Data[]) {
     this.entries = data;

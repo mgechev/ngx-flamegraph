@@ -1,16 +1,51 @@
+<!-- 
+  This component relies on css transform translate and scaleX in order to animate the positioning and expansion of flamegraph bars.
+
+  Notably there were two design decisions made to optimize this component:
+
+    1. No animations are performed on svg elements. Animating vector graphics requires the browser to rasterize each indiviudal frame (even if we're simply animating on transform translate). Instead svg elements are wrapped in divs and their parent divs are animated with transform translate, which skips rasterization and jumps straight to compositing.
+    2. Expansion animations rely on animating transform scaleX instead of width. Animating width would cause the browser to trigger layout recalculation on each frame, whereas animating transform scaleX relies on the compositor.
+-->
+
 <div class="ngx-fg-chart-wrapper" [class.ngx-fg-grayscale]="selectedData && selectedData.length">
-  <svg class="ngx-fg-svg" [attr.width]="width" [attr.height]="height" [attr.viewBox]="'0 0 ' + width + ' ' + height ">
-    <g flamegraph-node
-       *ngFor="let entry of entries; index as i"
-       (click)="frameClick.emit(entry.original)"
-       (mouseOverZoneless)="frameMouseEnter.emit(entry.original)"
-       (mouseLeaveZoneless)="frameMouseLeave.emit(entry.original)"
-       (zoom)="zoom.emit($event)"
-       [entry]="entry"
-       [height]="levelHeight"
-       [width]="getWidth(entry)"
-       class="ngx-fg-svg-g"
-       [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'">
-    </g>
-  </svg>
+  <!--
+    This first wrapper will let us perform a translate transform to position the bar without triggering rasterization.
+  -->
+  <div
+    [class.hide-bar]="!(minimumBarSize === undefined || getWidth(entry) > minimumBarSize)"
+    class="svg-wrapper"
+    [style.position]="'absolute'"
+    [style.transform] = "'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'"
+    [style.height.px]="levelHeight"
+    *ngFor="let entry of entries; index as i"
+  >
+    <div class="bar-text" [style.width.px]="getWidth(entry)">
+      {{ entry.label }}
+    </div>
+
+    <!-- 
+      This second wrapper will let us perform a scaleX transform to shrink the bar without triggering rasterization.
+
+      We need to separate this from the positioning wrappe because otherwise the label text would scale as well.
+    -->
+    <div
+    class="svg-wrapper"
+    [style.transform]="'scaleX(' + getWidth(entry) / width + ')'"
+    [style.height.px]="levelHeight"
+    >
+      <svg class="ngx-fg-svg" width="100%" height="100%">
+        <g flamegraph-node
+          (click)="frameClick.emit(entry.original)"
+          (mouseOverZoneless)="frameMouseEnter.emit(entry.original)"
+          (mouseLeaveZoneless)="frameMouseLeave.emit(entry.original)"
+          (zoom)="zoom.emit(entry)"
+          [height]="levelHeight"
+          [navigable]="entry.navigable"
+          [color]="entry.color"
+          class="ngx-fg-svg-g"
+          >
+        </g>
+      </svg>
+    </div>
+  </div>
 </div>
