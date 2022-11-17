@@ -10,7 +10,6 @@ import {
   NgZone,
   OnDestroy,
 } from "@angular/core";
-import { Data } from "../utils";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -21,10 +20,11 @@ import { Data } from "../utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlamegraphNodeComponent implements OnDestroy {
-  @Input() entry: Data;
   @Input() height: number;
-  @Input() width: number;
-  @Output() zoom = new EventEmitter();
+  @Input() navigable: boolean = false;
+  @Input() color: string;
+
+  @Output() zoom = new EventEmitter<void>();
 
   @Output() mouseOverZoneless = new EventEmitter();
   @Output() mouseLeaveZoneless = new EventEmitter();
@@ -34,7 +34,7 @@ export class FlamegraphNodeComponent implements OnDestroy {
 
   constructor(
     private _ngZone: NgZone,
-    private _element: ElementRef,
+    private _element: ElementRef<HTMLElement>,
     private _renderer: Renderer2
   ) {}
 
