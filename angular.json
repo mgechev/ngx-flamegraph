@@ -222,7 +222,6 @@
       }
     }
   },
-  "defaultProject": "ngx-flamegraph-sample",
   "cli": {
     "analytics": "aea5311a-b5dd-40cc-a2d1-2e2dfbe5e2cc"
   }
