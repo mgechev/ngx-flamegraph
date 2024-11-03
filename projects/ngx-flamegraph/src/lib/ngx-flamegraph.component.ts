@@ -1,4 +1,3 @@
-/// <reference types="resize-observer-browser" />
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone, HostBinding } from '@angular/core';
 import { Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color, restore, findDepth, transformData } from './utils';
 import { defaultColors } from './constants';

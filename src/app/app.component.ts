@@ -1,12 +1,15 @@
 import {Component} from '@angular/core';
+import { FlameGraphConfig, NgxFlamegraphModule } from 'ngx-flamegraph';
 
 @Component({
+  standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  imports: [NgxFlamegraphModule]
 })
 export class AppComponent {
-  config = { data };
+  config = { data } as FlameGraphConfig;
 }
 
 const data = [
