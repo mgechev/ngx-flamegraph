@@ -1,14 +1,40 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone, HostBinding } from '@angular/core';
-import { Data, RawData, transformRawData, maxValue, SiblingLayout, FlamegraphColor, Color, restore, findDepth, transformData } from './utils';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ChangeDetectionStrategy,
+  ViewEncapsulation,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ElementRef,
+  NgZone,
+  HostBinding,
+} from '@angular/core';
+import {
+  Data,
+  RawData,
+  transformRawData,
+  maxValue,
+  SiblingLayout,
+  FlamegraphColor,
+  Color,
+  restore,
+  findDepth,
+  transformData,
+} from './utils';
 import { defaultColors } from './constants';
 
 export interface FlameGraphConfig {
   color?: FlamegraphColor;
   data: RawData[];
-  minimumBarSize?: number // smallest that a bar can be in pixels and still be rendered
+  minimumBarSize?: number; // smallest that a bar can be in pixels and still be rendered
 }
 
 const isResizeObserverAvailable = typeof ResizeObserver !== 'undefined';
+
+const RESIZE_DEBOUNCE = 125;
 
 @Component({
   selector: 'ngx-flamegraph',
@@ -25,6 +51,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   private _colors: FlamegraphColor;
   // tslint:disable-next-line: variable-name
   private _data: RawData[];
+  private _resizeTimeout?: ReturnType<typeof setTimeout>;
 
   @Output() frameClick = new EventEmitter<RawData>();
   @Output() frameMouseEnter = new EventEmitter<RawData>();
@@ -49,18 +76,20 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
     return `height: ${this.depth * this.levelHeight}px `;
   }
 
-  constructor(private _el: ElementRef, public cdr: ChangeDetectorRef, private _ngZone: NgZone) { }
+  constructor(private _el: ElementRef, public cdr: ChangeDetectorRef, private _ngZone: NgZone) {}
 
   ngOnInit(): void {
     const parent = this._el.nativeElement?.parentElement;
     if (parent && this.width === null && isResizeObserverAvailable) {
-      // Explicitly fire ResizeObserver callback inside the Angular zone
-      // because ResizeObserver is not patched by zone.js by default
-      this._resizeObserver = new ResizeObserver(() =>
-        this._ngZone.run(() => this._onParentResize())
-      );
+      this._resizeObserver = new ResizeObserver(() => {
+        clearTimeout(this._resizeTimeout);
+        this._resizeTimeout = setTimeout(() => {
+          // Explicitly fire ResizeObserver callback inside the Angular zone
+          // because ResizeObserver is not patched by zone.js by default
+          this._ngZone.run(() => this._onParentResize());
+        }, RESIZE_DEBOUNCE);
+      });
       this._resizeObserver.observe(parent);
-
     }
   }
 
@@ -69,6 +98,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
     if (parent && this._resizeObserver && isResizeObserverAvailable) {
       this._resizeObserver.unobserve(parent);
     }
+    clearTimeout(this._resizeTimeout);
   }
 
   private _onParentResize(): void {
@@ -84,7 +114,7 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
     const colors: Color = {
       hue: Array.isArray(hue) ? hue : [hue, hue],
       saturation: Array.isArray(saturation) ? saturation : [saturation, saturation],
-      lightness: Array.isArray(lightness) ? lightness : [lightness, lightness]
+      lightness: Array.isArray(lightness) ? lightness : [lightness, lightness],
     };
     this.entries = transformRawData(this._data, this.siblingLayout, maxValue(this._data), colors);
     this.depth = findDepth(this._data);
