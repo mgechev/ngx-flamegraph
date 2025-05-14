@@ -1,35 +1,60 @@
-.ngx-fg-svg {
-  pointer-events: none;
-}
-
 ngx-flamegraph-graph {
   position: absolute;
   display: block;
   overflow: hidden;
 }
 
-.svg-wrapper {
-  width: 100%;
-  transform-origin: left;
-}
-
-.svg-wrapper {
-  transition: transform 0.333s ease-in-out, opacity 0.333s ease-in-out;
-}
-
-.bar-text {
+.ngx-fg-bar {
   position: absolute;
+  transform-origin: left;
+  transition: transform 0.333s ease-in-out, opacity 0.333s ease-in-out;
   z-index: 1;
   overflow: hidden;
-  pointer-events: none;
+  width: 100%;
   user-select: none;
   color: white;
-  padding: 5px;
   font-family: sans-serif;
   font-size: 80%;
+  box-sizing: border-box;
+  cursor: default;
+  will-change: transform;
 }
 
-.hide-bar {
-  opacity: 0;
-  pointer-events: none;
+.ngx-fg-bar::before {
+  content: '';
+  position: absolute;
+  background: var(--bg);
+  top: 0;
+  left: 0;
+  height: inherit;
+  width: inherit;
+  transition: transform 0.333s ease-in-out;
+  transform-origin: left;
+  transform: scaleX(var(--scale-x));
+  will-change: transform;
+}
+
+.ngx-fg-bar::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: var(--clip-path);
+  height: inherit;
+  width: 100%;
+  overflow: hidden;
+  padding: 4px 5px;
+  box-sizing: border-box;
+}
+
+.ngx-fg-bar.ngx-fg-hide-bar::before {
+  transform: scaleX(0);
+}
+
+.ngx-fg-bar.ngx-fg-hide-bar::after {
+  clip-path: inset(0 100% 0 0);
+}
+
+.ngx-fg-navigable {
+  opacity: 0.5;
 }
