@@ -33,7 +33,7 @@ export interface Data {
   original: RawData;
 }
 
-export type SiblingLayout = 'relative' | 'equal';
+export type SiblingLayout = "relative" | "equal";
 
 export const maxValue = (data: RawData[]) => {
   return data.reduce((p, c) => {
@@ -44,9 +44,30 @@ export const maxValue = (data: RawData[]) => {
 const getComponent = ([min, max]: [number, number], intensity: number) =>
   min + (max - min) * intensity;
 
+const calculateWidthRatio = (
+  siblingsTotalValue: number,
+  entryValue: number,
+  parentValue: number,
+  parentRatio: number,
+  siblingsCount: number,
+  layout: SiblingLayout
+) => {
+  let widthRatio: number;
+
+  if (layout === "relative") {
+    const entryToSiblingsRatio = entryValue / siblingsTotalValue;
+    const siblingsToParentRatio = siblingsTotalValue / parentValue;
+    widthRatio = entryToSiblingsRatio * siblingsToParentRatio * parentRatio;
+  } else {
+    widthRatio = parentRatio / siblingsCount;
+  }
+
+  return widthRatio;
+};
+
 export const transformRawData = (
   data: RawData[],
-  layout: 'relative' | 'equal',
+  layout: SiblingLayout,
   maxDataValue: number,
   colors: Color,
   parent: Data | null = null,
@@ -61,10 +82,14 @@ export const transformRawData = (
   });
   const siblings: Data[] = [];
   data.forEach((entry) => {
-    let widthRatio = parentRatio / data.length;
-    if (layout === 'relative') {
-      widthRatio = (entry.value / totalValue) * parentRatio || 0;
-    }
+    const widthRatio = calculateWidthRatio(
+      totalValue,
+      entry.value,
+      parent?.value ?? totalValue,
+      parentRatio,
+      data.length,
+      layout
+    );
     const intensity = Math.min(entry.value / maxDataValue, 1);
     const color =
       entry.color ||
@@ -127,7 +152,7 @@ const collapse = (e: Data) => {
 };
 
 const collapseOthers = (entry: Data) => {
-  entry.siblings.forEach(e => {
+  entry.siblings.forEach((e) => {
     if (e === entry) {
       return;
     }
@@ -146,7 +171,7 @@ const collapseOthers = (entry: Data) => {
 const hide = (leftRatio: number, node: Data) => {
   node.widthRatio = 0;
   node.leftRatio = leftRatio;
-  node.children.forEach(n => hide(leftRatio, n));
+  node.children.forEach((n) => hide(leftRatio, n));
 };
 
 const hideSiblings = (node: Data) => {
@@ -174,27 +199,33 @@ export const transformData = (focused: Data, layout: SiblingLayout) => {
       current.navigable = true;
     }
   }
-  adjustChildren(focused.children, layout);
+  adjustChildren(focused.children, layout, focused.value);
 };
 
 const adjustChildren = (
   data: Data[],
   layout: SiblingLayout,
+  parentValue: number,
   leftRatio = 0,
   parentRatio = 1
 ) => {
   let totalValue = 0;
-  data.forEach(entry => {
+  data.forEach((entry) => {
     totalValue += entry.value;
   });
-  data.forEach(entry => {
-    let widthRatio = (entry.value / totalValue) * parentRatio;
-    if (layout === 'equal') {
-      widthRatio = parentRatio / data.length;
-    }
+  data.forEach((entry) => {
+    const widthRatio = calculateWidthRatio(
+      totalValue,
+      entry.value,
+      parentValue,
+      parentRatio,
+      data.length,
+      layout
+    );
+
     entry.widthRatio = widthRatio;
     entry.leftRatio = leftRatio;
-    adjustChildren(entry.children, layout, leftRatio, widthRatio);
+    adjustChildren(entry.children, layout, entry.value, leftRatio, widthRatio);
     leftRatio += widthRatio;
   });
 };
