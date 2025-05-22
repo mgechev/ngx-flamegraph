@@ -14,6 +14,10 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 
+type Coor = { x: number; y: number };
+
+const LETTER_WIDTH = 14; // Hypothetical/average letter width; In pixels
+
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'ngx-flamegraph-graph',
@@ -27,7 +31,11 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
   private readonly _renderer = inject(Renderer2);
   private readonly _elementRef = inject(ElementRef);
 
-  private _unlisteners: (() => void)[] = [];
+  private readonly _unlisteners: (() => void)[] = [];
+  private _tooltip: {
+    element: HTMLElement;
+    data: RawData;
+  } | null = null;
 
   selectedData: Data[] = [];
   entries: Data[] = [];
@@ -42,6 +50,7 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
   @Input() layout: SiblingLayout;
   @Input() depth: number;
   @Input() minimumBarSize: number | undefined;
+  @Input() tooltipEnabled: boolean;
 
   @Input() set data(data: Data[]) {
     this.entries = data;
@@ -95,11 +104,15 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     // Outside Angular
     this._ngZone.runOutsideAngular(() => {
       const mousemove = this._renderer.listen(el, 'mousemove', (e: MouseEvent) => {
+        const mouseCoor = { x: e.clientX, y: e.clientY };
+        this._moveTooltip(mouseCoor);
+
         if (currentTarget === e.target) {
           return;
         }
         if (currentEntry) {
           this.frameMouseLeave.emit(currentEntry.original);
+          this._hideTooltip();
         }
 
         currentTarget = e.target as Element | null;
@@ -107,6 +120,7 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
 
         if (currentEntry) {
           this.frameMouseEnter.emit(currentEntry.original);
+          this._showTooltip(currentEntry, mouseCoor);
         }
       });
 
@@ -115,6 +129,7 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
           return;
         }
         this.frameMouseLeave.emit(currentEntry.original);
+        this._hideTooltip();
         currentTarget = null;
         currentEntry = null;
       });
@@ -151,5 +166,40 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
 
     const idx = parseInt(dataIdx, 10);
     return this.entries[idx] ?? null;
+  }
+
+  private _showTooltip(entry: Data, startCoor: Coor) {
+    if (!this.tooltipEnabled || this.getWidth(entry) > entry.label.length * LETTER_WIDTH) {
+      return;
+    }
+
+    const data = entry.original;
+
+    if (this._tooltip?.data !== data) {
+      this._hideTooltip();
+    }
+
+    if (!this._tooltip) {
+      const element = this._renderer.createElement('div');
+      this._renderer.addClass(element, 'ngx-fg-tooltip');
+      element.innerText = data.label;
+      this._renderer.appendChild(this._elementRef.nativeElement, element);
+      this._tooltip = { element, data };
+
+      this._moveTooltip(startCoor);
+    }
+  }
+
+  private _hideTooltip() {
+    this._tooltip?.element.remove();
+    this._tooltip = null;
+  }
+
+  private _moveTooltip({ x, y }: Coor) {
+    if (!this._tooltip) {
+      return;
+    }
+    const translate = `translate(${x}px, ${y}px)`;
+    this._renderer.setStyle(this._tooltip.element, 'transform', translate);
   }
 }

@@ -12,6 +12,7 @@
       [class.ngx-fg-hide-bar]="!(minimumBarSize === undefined || getWidth(entry) > minimumBarSize)"
       [class.ngx-fg-navigable]="entry.navigable"
       [style.height.px]="levelHeight"
+      [style.line-height.px]="levelHeight"
       [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'"
       [attr.data-idx]="i"
       [attr.data-label]="entry.label"

@@ -35,6 +35,7 @@ export interface FlameGraphConfig {
 const isResizeObserverAvailable = typeof ResizeObserver !== 'undefined';
 
 const RESIZE_DEBOUNCE = 125;
+const DEFAULT_LEVEL_HEIGHT = 25;
 
 @Component({
   selector: 'ngx-flamegraph',
@@ -57,12 +58,31 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   @Output() frameMouseEnter = new EventEmitter<RawData>();
   @Output() frameMouseLeave = new EventEmitter<RawData>();
 
+  /**
+   * `equal` or `relative`. Equal will set all the siblings with the same width, compared to `relative`, which will look at their values relative to the sum of the values of all the siblings.
+   */
   @Input() siblingLayout: SiblingLayout = 'relative';
+
+  /**
+   * Sets the width of the chart.
+   */
   @Input() width: number | null = null;
-  @Input() levelHeight = 25;
+
+  /**
+   * Sets the height per level of the chart. Default `25`.
+   */
+  @Input() levelHeight = DEFAULT_LEVEL_HEIGHT;
+
+  /**
+   * Shows a tooltip for the narrow bars that can't display the whole label. Default: `false`.
+   */
+  @Input() tooltipEnabled: boolean = false;
 
   minimumBarSize: number;
 
+  /**
+   * Flamegraph configuration.
+   */
   @Input() set config(config: FlameGraphConfig) {
     this._data = config.data;
     this._colors = config.color ?? defaultColors;
