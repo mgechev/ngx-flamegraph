@@ -19,12 +19,13 @@ type Coor = { x: number; y: number };
 const LETTER_WIDTH = 14; // Hypothetical/average letter width; In pixels
 
 @Component({
-  // tslint:disable-next-line:component-selector
-  selector: 'ngx-flamegraph-graph',
-  templateUrl: './flamegraph.component.html',
-  styleUrls: ['./flamegraph.component.css'],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    // tslint:disable-next-line:component-selector
+    selector: 'ngx-flamegraph-graph',
+    templateUrl: './flamegraph.component.html',
+    styleUrls: ['./flamegraph.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class FlamegraphComponent implements OnInit, OnDestroy {
   private readonly _ngZone = inject(NgZone);

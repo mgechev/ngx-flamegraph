@@ -38,11 +38,12 @@ const RESIZE_DEBOUNCE = 125;
 const DEFAULT_LEVEL_HEIGHT = 25;
 
 @Component({
-  selector: 'ngx-flamegraph',
-  templateUrl: './ngx-flamegraph.component.html',
-  styleUrls: ['./ngx-flamechart.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
+    selector: 'ngx-flamegraph',
+    templateUrl: './ngx-flamegraph.component.html',
+    styleUrls: ['./ngx-flamechart.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   entries: Data[] = [];
