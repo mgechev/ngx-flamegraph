@@ -1,17 +1,18 @@
-<ngx-flamegraph-graph
-  *ngIf="width !== null"
-  (frameClick)="frameClick.emit($event)"
-  (frameMouseEnter)="onFrameMouseEnter($event)"
-  (frameMouseLeave)="onFrameMouseLeave($event)"
-  (zoom)="onZoom($event)"
-  [layout]="siblingLayout"
-  [data]="entries"
-  [depth]="depth"
-  [levelHeight]="levelHeight"
-  [width]="width"
-  [style.height.px]="depth * levelHeight + depth"
-  [style.width.px]="width"
-  [minimumBarSize]="minimumBarSize"
-  [tooltipEnabled]="tooltipEnabled"
->
-</ngx-flamegraph-graph>
+@if (width !== null) {
+  <ngx-flamegraph-graph
+    (frameClick)="frameClick.emit($event)"
+    (frameMouseEnter)="onFrameMouseEnter($event)"
+    (frameMouseLeave)="onFrameMouseLeave($event)"
+    (zoom)="onZoom($event)"
+    [layout]="siblingLayout"
+    [data]="entries"
+    [depth]="depth"
+    [levelHeight]="levelHeight"
+    [width]="width"
+    [style.height.px]="depth * levelHeight + depth"
+    [style.width.px]="width"
+    [minimumBarSize]="minimumBarSize"
+    [tooltipEnabled]="tooltipEnabled"
+    >
+  </ngx-flamegraph-graph>
+}
