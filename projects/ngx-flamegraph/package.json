@@ -1,12 +1,12 @@
 {
   "name": "ngx-flamegraph",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "license": "MIT",
   "dependencies": {
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.0",
-    "@angular/core": "^17.0.0"
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0"
   }
 }
