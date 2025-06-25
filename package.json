@@ -21,7 +21,7 @@
     "@angular/router": "^20.0.4",
     "@angular/ssr": "^20.0.3",
     "express": "^4.18.2",
-    "rxjs": "~6.6.0",
+    "rxjs": "~7.8.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.15.1"
   },
