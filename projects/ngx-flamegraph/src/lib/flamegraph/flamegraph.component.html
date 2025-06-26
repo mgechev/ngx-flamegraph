@@ -14,16 +14,15 @@
       [style.height.px]="levelHeight"
       [style.line-height.px]="levelHeight"
       [style.transform]="'translate(' + getLeft(entry) + 'px,' + getTop(entry) + 'px)'"
-      [attr.data-idx]="i"
       [attr.data-label]="entry.label"
-      [style]="
-        '--scale-x: ' +
-        getScaleXWidth(entry) +
-        '; --bg: ' +
-        entry.color +
-        '; --clip-path: ' +
-        getClipPathWidth(entry)
-      "
-    ></div>
+      [style]="'--clip-path: ' + getClipPathWidth(entry)"
+    >
+      <div
+        class="ngx-fg-bar-fill"
+        [style]="'--scale-x: ' + getScaleXWidth(entry)"
+        [style.background-color]="entry.color"
+        [attr.data-idx]="i"
+      ></div>
+    </div>
   }
 </div>

@@ -13,30 +13,40 @@ import {
   Renderer2,
   ViewEncapsulation,
 } from '@angular/core';
+import { WINDOW } from '../window.provider';
 
 type Coor = { x: number; y: number };
 
+type Tooltip = {
+  element: HTMLElement;
+  data: RawData;
+  size: {
+    width: number;
+    height: number;
+  };
+};
+
 const LETTER_WIDTH = 14; // Hypothetical/average letter width; In pixels
+const TOOLTIP_X_MARGIN = 10;
+const TOOLTIP_Y_MARGIN = 20;
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'ngx-flamegraph-graph',
-    templateUrl: './flamegraph.component.html',
-    styleUrls: ['./flamegraph.component.css'],
-    encapsulation: ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  // tslint:disable-next-line:component-selector
+  selector: 'ngx-flamegraph-graph',
+  templateUrl: './flamegraph.component.html',
+  styleUrls: ['./flamegraph.component.css'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FlamegraphComponent implements OnInit, OnDestroy {
   private readonly _ngZone = inject(NgZone);
   private readonly _renderer = inject(Renderer2);
   private readonly _elementRef = inject(ElementRef);
+  private readonly _window = inject(WINDOW);
 
   private readonly _unlisteners: (() => void)[] = [];
-  private _tooltip: {
-    element: HTMLElement;
-    data: RawData;
-  } | null = null;
+  private _tooltip: Tooltip | null = null;
 
   selectedData: Data[] = [];
   entries: Data[] = [];
@@ -82,7 +92,7 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
 
   getScaleXWidth(entry: Data) {
     // Subtract a single pixel from the width to achieve 1px column gap.
-    return entry.widthRatio - this.pixelRatio(entry);
+    return Math.max(0, entry.widthRatio - this.pixelRatio(entry));
   }
 
   getClipPathWidth(entry: Data) {
@@ -94,7 +104,8 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
   }
 
   private pixelRatio(entry: Data) {
-    return entry.widthRatio / this.getWidth(entry);
+    const width = this.getWidth(entry);
+    return width > 0 ? entry.widthRatio / width : 0;
   }
 
   private _initEventListeners() {
@@ -181,11 +192,14 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     }
 
     if (!this._tooltip) {
-      const element = this._renderer.createElement('div');
+      const element = this._renderer.createElement('div') as HTMLDivElement;
       this._renderer.addClass(element, 'ngx-fg-tooltip');
       element.innerText = data.label;
       this._renderer.appendChild(this._elementRef.nativeElement, element);
-      this._tooltip = { element, data };
+
+      const { clientWidth, clientHeight } = element;
+      const size = { width: clientWidth, height: clientHeight };
+      this._tooltip = { element, data, size };
 
       this._moveTooltip(startCoor);
     }
@@ -196,10 +210,29 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     this._tooltip = null;
   }
 
-  private _moveTooltip({ x, y }: Coor) {
+  private _moveTooltip(coor: Coor) {
     if (!this._tooltip) {
       return;
     }
+
+    let x = 0;
+    let y = 0;
+    const { size } = this._tooltip;
+
+    // Set the default position: centered, below the cursor
+    x = coor.x - size.width / 2;
+    y = coor.y + TOOLTIP_Y_MARGIN;
+
+    // Handle out of bounds cases
+    if (x < 0) {
+      x = TOOLTIP_X_MARGIN;
+    } else if (x + size.width >= this._window.innerWidth) {
+      x = this._window.innerWidth - size.width - TOOLTIP_X_MARGIN;
+    }
+    if (y + size.height >= this._window.innerHeight) {
+      y = coor.y - size.height - TOOLTIP_Y_MARGIN / 2;
+    }
+
     const translate = `translate(${x}px, ${y}px)`;
     this._renderer.setStyle(this._tooltip.element, 'transform', translate);
   }
