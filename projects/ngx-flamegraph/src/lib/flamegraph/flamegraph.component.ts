@@ -194,7 +194,7 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     if (!this._tooltip) {
       const element = this._renderer.createElement('div') as HTMLDivElement;
       this._renderer.addClass(element, 'ngx-fg-tooltip');
-      element.innerText = data.label;
+      element.textContent = data.label;
       this._renderer.appendChild(this._elementRef.nativeElement, element);
 
       const { clientWidth, clientHeight } = element;
