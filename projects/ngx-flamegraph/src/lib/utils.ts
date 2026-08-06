@@ -1,14 +1,23 @@
-export interface FlamegraphColor {
+export type FlamegraphColor = HslColor | RgbColor;
+
+export interface HslColor {
   hue: number | [number, number];
   saturation: number | [number, number];
   lightness: number | [number, number];
 }
 
-export interface Color {
-  hue: [number, number];
-  saturation: [number, number];
-  lightness: [number, number];
+export interface RgbColor {
+  red: number | [number, number];
+  green: number | [number, number];
+  blue: number | [number, number];
 }
+
+type MultiColor<T> = {
+  [K in keyof T]: Extract<T[K], [number, number]>;
+};
+
+type MultiHslColor = MultiColor<HslColor>;
+type MultiRgbColor = MultiColor<RgbColor>;
 
 export interface RawData {
   label: string;
@@ -33,7 +42,7 @@ export interface Data {
   original: RawData;
 }
 
-export type SiblingLayout = "relative" | "equal";
+export type SiblingLayout = 'relative' | 'equal';
 
 export const maxValue = (data: RawData[]) => {
   return data.reduce((p, c) => {
@@ -41,20 +50,17 @@ export const maxValue = (data: RawData[]) => {
   }, -Infinity);
 };
 
-const getComponent = ([min, max]: [number, number], intensity: number) =>
-  min + (max - min) * intensity;
-
 const calculateWidthRatio = (
   siblingsTotalValue: number,
   entryValue: number,
   parentValue: number,
   parentRatio: number,
   siblingsCount: number,
-  layout: SiblingLayout
+  layout: SiblingLayout,
 ) => {
   let widthRatio: number;
 
-  if (layout === "relative") {
+  if (layout === 'relative') {
     const entryToSiblingsRatio = entryValue / siblingsTotalValue;
     const siblingsToParentRatio = siblingsTotalValue / parentValue;
     widthRatio = entryToSiblingsRatio * siblingsToParentRatio * parentRatio;
@@ -69,11 +75,11 @@ export const transformRawData = (
   data: RawData[],
   layout: SiblingLayout,
   maxDataValue: number,
-  colors: Color,
+  colors: FlamegraphColor,
   parent: Data | null = null,
   leftRatio = 0,
   parentRatio = 1,
-  rowNumber = 0
+  rowNumber = 0,
 ) => {
   const result: Data[] = [];
   let totalValue = 0;
@@ -88,20 +94,15 @@ export const transformRawData = (
       parent?.value ?? totalValue,
       parentRatio,
       data.length,
-      layout
+      layout,
     );
-    const intensity = Math.min(entry.value / maxDataValue, 1);
-    const color =
-      entry.color ||
-      `hsl(${getComponent(colors.hue, intensity) ?? 0}, ${
-        getComponent(colors.saturation, intensity) ?? 80
-      }%, ${getComponent(colors.lightness, intensity) ?? 0}%)`;
+
     const children: Data[] = [];
     const node: Data = {
       label: entry.label,
       value: entry.value,
       siblings,
-      color,
+      color: calculateNodeColor(entry, maxDataValue, colors),
       widthRatio,
       originalWidthRatio: widthRatio,
       originalLeftRatio: leftRatio,
@@ -123,7 +124,7 @@ export const transformRawData = (
       node,
       leftRatio,
       widthRatio,
-      rowNumber + 1
+      rowNumber + 1,
     );
     siblings.push(node);
     result.push(node, ...rest);
@@ -207,7 +208,7 @@ const adjustChildren = (
   layout: SiblingLayout,
   parentValue: number,
   leftRatio = 0,
-  parentRatio = 1
+  parentRatio = 1,
 ) => {
   let totalValue = 0;
   data.forEach((entry) => {
@@ -220,7 +221,7 @@ const adjustChildren = (
       parentValue,
       parentRatio,
       data.length,
-      layout
+      layout,
     );
 
     entry.widthRatio = widthRatio;
@@ -235,4 +236,61 @@ export const restore = (entry: Data) => {
   entry.leftRatio = entry.originalLeftRatio;
   entry.widthRatio = entry.originalWidthRatio;
   entry.children.forEach(restore);
+};
+
+const isHslColor = (color: FlamegraphColor): color is HslColor =>
+  'hue' in color && 'saturation' in color && 'lightness' in color;
+
+const isRgbColor = (color: FlamegraphColor): color is RgbColor =>
+  'red' in color && 'green' in color && 'blue' in color;
+
+const normalizeColor = <T extends Record<string, any>, U extends Record<string, any>>(
+  color: T,
+  channels: string[],
+): U => {
+  const multi = {} as U;
+  for (const ch of channels) {
+    const colorCh = color[ch];
+    (multi as Record<string, any>)[ch] = Array.isArray(colorCh) ? colorCh : [colorCh, colorCh];
+  }
+  return multi;
+};
+
+const HSL_CHANNELS: (keyof HslColor)[] = ['hue', 'saturation', 'lightness'];
+const RGB_CHANNELS: (keyof RgbColor)[] = ['red', 'green', 'blue'];
+
+const normalizeHslColor = (color: HslColor) =>
+  normalizeColor<HslColor, MultiHslColor>(color, HSL_CHANNELS);
+const normalizeRgbColor = (color: RgbColor) =>
+  normalizeColor<RgbColor, MultiRgbColor>(color, RGB_CHANNELS);
+
+const getComponent = ([min, max]: [number, number], intensity: number) =>
+  min + (max - min) * intensity;
+
+const calculateNodeColor = (entry: RawData, maxValue: number, colors: FlamegraphColor): string => {
+  if (entry.color) {
+    return entry.color;
+  }
+
+  const intensity = Math.min(entry.value / maxValue, 1);
+
+  if (isHslColor(colors)) {
+    const c = normalizeHslColor(colors);
+    const hue = getComponent(c.hue, intensity) ?? 0;
+    const saturation = getComponent(c.saturation, intensity) ?? 80;
+    const lightness = getComponent(c.lightness, intensity) ?? 0;
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  }
+
+  if (isRgbColor(colors)) {
+    const c = normalizeRgbColor(colors);
+    const red = getComponent(c.red, intensity) ?? 0;
+    const green = getComponent(c.green, intensity) ?? 0;
+    const blue = getComponent(c.blue, intensity) ?? 0;
+
+    return `rgb(${red}, ${green}, ${blue})`;
+  }
+
+  throw new Error('Unsupported color scheme.');
 };
