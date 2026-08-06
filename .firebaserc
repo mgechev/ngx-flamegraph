@@ -1,4 +1,7 @@
 {
+  "projects": {
+    "default": "ngx-flamegraph"
+  },
   "targets": {
     "ngx-flamegraph": {
       "hosting": {
