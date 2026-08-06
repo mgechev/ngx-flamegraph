@@ -170,7 +170,8 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     if (!element) {
       return null;
     }
-    const dataIdx = element.getAttribute('data-idx');
+    const target = element.closest ? element.closest('[data-idx]') : null;
+    const dataIdx = target ? target.getAttribute('data-idx') : element.getAttribute('data-idx');
 
     if (!dataIdx) {
       return null;
@@ -226,10 +227,10 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     // Handle out of bounds cases
     if (x < 0) {
       x = TOOLTIP_X_MARGIN;
-    } else if (x + size.width >= this._window.innerWidth) {
+    } else if (this._window && typeof this._window.innerWidth === 'number' && x + size.width >= this._window.innerWidth) {
       x = this._window.innerWidth - size.width - TOOLTIP_X_MARGIN;
     }
-    if (y + size.height >= this._window.innerHeight) {
+    if (this._window && typeof this._window.innerHeight === 'number' && y + size.height >= this._window.innerHeight) {
       y = coor.y - size.height - TOOLTIP_Y_MARGIN / 2;
     }
 
@@ -237,3 +238,4 @@ export class FlamegraphComponent implements OnInit, OnDestroy {
     this._renderer.setStyle(this._tooltip.element, 'transform', translate);
   }
 }
+

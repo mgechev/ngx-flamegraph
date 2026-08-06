@@ -158,11 +158,13 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   }
 
   private _refresh() {
+    const data = this._data ?? [];
+    const colors = this._colors ?? defaultColors;
     this.entries = transformRawData(
-      this._data,
+      data,
       this.siblingLayout,
-      maxValue(this._data),
-      this._colors,
+      maxValue(data),
+      colors,
     );
     this.depth = findDepth(this._data);
   }

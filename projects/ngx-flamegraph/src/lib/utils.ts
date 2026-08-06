@@ -44,10 +44,13 @@ export interface Data {
 
 export type SiblingLayout = 'relative' | 'equal';
 
-export const maxValue = (data: RawData[]) => {
+export const maxValue = (data: RawData[]): number => {
+  if (!data || !data.length) {
+    return 0;
+  }
   return data.reduce((p, c) => {
     return Math.max(p, c.value, maxValue(c.children || []));
-  }, -Infinity);
+  }, 0);
 };
 
 const calculateWidthRatio = (
@@ -61,14 +64,18 @@ const calculateWidthRatio = (
   let widthRatio: number;
 
   if (layout === 'relative') {
-    const entryToSiblingsRatio = entryValue / siblingsTotalValue;
-    const siblingsToParentRatio = siblingsTotalValue / parentValue;
-    widthRatio = entryToSiblingsRatio * siblingsToParentRatio * parentRatio;
+    if (siblingsTotalValue === 0 || parentValue === 0) {
+      widthRatio = siblingsCount > 0 ? parentRatio / siblingsCount : 0;
+    } else {
+      const entryToSiblingsRatio = entryValue / siblingsTotalValue;
+      const siblingsToParentRatio = siblingsTotalValue / parentValue;
+      widthRatio = entryToSiblingsRatio * siblingsToParentRatio * parentRatio;
+    }
   } else {
-    widthRatio = parentRatio / siblingsCount;
+    widthRatio = siblingsCount > 0 ? parentRatio / siblingsCount : 0;
   }
 
-  return widthRatio;
+  return isNaN(widthRatio) ? 0 : widthRatio;
 };
 
 export const transformRawData = (
@@ -264,15 +271,17 @@ const normalizeHslColor = (color: HslColor) =>
 const normalizeRgbColor = (color: RgbColor) =>
   normalizeColor<RgbColor, MultiRgbColor>(color, RGB_CHANNELS);
 
-const getComponent = ([min, max]: [number, number], intensity: number) =>
-  min + (max - min) * intensity;
+const getComponent = ([min, max]: [number, number], intensity: number) => {
+  const val = min + (max - min) * intensity;
+  return isNaN(val) ? min : val;
+};
 
 const calculateNodeColor = (entry: RawData, maxValue: number, colors: FlamegraphColor): string => {
   if (entry.color) {
     return entry.color;
   }
 
-  const intensity = Math.min(entry.value / maxValue, 1);
+  const intensity = maxValue > 0 ? Math.min(Math.max(entry.value / maxValue, 0), 1) : 0;
 
   if (isHslColor(colors)) {
     const c = normalizeHslColor(colors);
