@@ -23,7 +23,7 @@ export interface RawData {
   label: string;
   value: number;
   color?: string;
-  children: RawData[];
+  children?: RawData[];
 }
 
 export interface Data {

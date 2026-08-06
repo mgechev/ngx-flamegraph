@@ -125,11 +125,11 @@ describe('FlamegraphComponent', () => {
       // Move onto bar 1
       barFill2.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 60, clientY: 30 }));
       expect(component.frameMouseLeave.emit).toHaveBeenCalledWith(rawData[0]);
-      expect(component.frameMouseEnter.emit).toHaveBeenCalledWith(rawData[0].children[0]);
+      expect(component.frameMouseEnter.emit).toHaveBeenCalledWith(rawData[0].children![0]);
 
       // Leave the chart area
       host.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-      expect(component.frameMouseLeave.emit).toHaveBeenCalledWith(rawData[0].children[0]);
+      expect(component.frameMouseLeave.emit).toHaveBeenCalledWith(rawData[0].children![0]);
     });
   });
 

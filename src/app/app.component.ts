@@ -8,7 +8,16 @@ import { FlameGraphConfig, NgxFlamegraphModule } from 'ngx-flamegraph';
     imports: [NgxFlamegraphModule]
 })
 export class AppComponent {
-  config = { data } as FlameGraphConfig;
+  config: FlameGraphConfig = { data };
+
+  rgbConfig: FlameGraphConfig = {
+    data,
+    color: {
+      red: [50, 240],
+      green: [120, 60],
+      blue: [220, 30],
+    },
+  };
 }
 
 const data = [

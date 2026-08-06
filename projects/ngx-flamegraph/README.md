@@ -54,12 +54,19 @@ interface Data {
 export class AppComponent implements OnInit {
   width = window.innerWidth - 100;
 
-  // Optional property.
+  // Optional color property (supports both HSL and RGB).
   color = {
     hue: [50, 0],
     saturation: [80, 80],
     lightness: [55, 60],
   };
+
+  // Or in RGB:
+  // color = {
+  //   red: [50, 240],
+  //   green: [120, 60],
+  //   blue: [220, 30],
+  // };
   data = [
     {
       label: 'root',
