@@ -87,7 +87,7 @@ export class AppComponent implements OnInit {
 
 ## Configuration
 
-- `data` - property of type `RawData[]`. `RawData` is the same interface as `Data` in the example above.
+- `config` - property that contains the `data: RawData[]` and an optional `color` pair. `RawData` is the same interface as `Data` in the example above.
 - `siblingLayout` - `equal` or `relative`. Equal will set all the siblings with the same width, compared to `relative`, which will look at their values relative to the sum of the values of all the siblings.
 - `width` - sets the width of the chart.
 - `levelHeight` - sets the height per level of the chart. Default `25`.

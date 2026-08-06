@@ -19,7 +19,6 @@ import {
   maxValue,
   SiblingLayout,
   FlamegraphColor,
-  Color,
   restore,
   findDepth,
   transformData,
@@ -27,9 +26,37 @@ import {
 import { defaultColors } from './constants';
 
 export interface FlameGraphConfig {
+  /**
+   * A color pair that represents the min and max value colors.
+   * The colors of the values in-between those are calculated based on 
+   * the selected color model – HSL or RGB.
+   * 
+   * Example:
+   * 
+   * ```typescript
+   * // First items: min value color channels
+   * // Second items: max value color channels
+   * const color = {
+   *   hue: [50, 0],
+   *   saturation: [80, 80],
+   *   lightness: [55, 60],
+   * };
+   * 
+   * // Or in RGB
+   * const color = {
+   *   red: [255, 0],
+   *   green: [0, 0],
+   *   blue: [0, 255],
+   * };
+   * ```
+   */
   color?: FlamegraphColor;
+
+  /** The data to visualize. */
   data: RawData[];
-  minimumBarSize?: number; // smallest that a bar can be in pixels and still be rendered
+
+  /** The smallest a bar can be in pixels and still be rendered. */
+  minimumBarSize?: number;
 }
 
 const isResizeObserverAvailable = typeof ResizeObserver !== 'undefined';
@@ -131,13 +158,12 @@ export class NgxFlamegraphComponent implements OnInit, OnDestroy {
   }
 
   private _refresh() {
-    const { hue, saturation, lightness } = this._colors;
-    const colors: Color = {
-      hue: Array.isArray(hue) ? hue : [hue, hue],
-      saturation: Array.isArray(saturation) ? saturation : [saturation, saturation],
-      lightness: Array.isArray(lightness) ? lightness : [lightness, lightness],
-    };
-    this.entries = transformRawData(this._data, this.siblingLayout, maxValue(this._data), colors);
+    this.entries = transformRawData(
+      this._data,
+      this.siblingLayout,
+      maxValue(this._data),
+      this._colors,
+    );
     this.depth = findDepth(this._data);
   }
 
